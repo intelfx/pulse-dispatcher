@@ -11,17 +11,17 @@ static const char* __file_name_translation_unit()
 
 extern bool do_not_abort;
 
-#define _log(tag, fmt, ...) fprintf (stderr, "\r" tag " [%s] " fmt "\n", __file_name_translation_unit(), ## __VA_ARGS__)
+#define __write_msg(tag, fmt, ...) fprintf (stderr, "\r" tag " [%s] " fmt "\n", __file_name_translation_unit(), ## __VA_ARGS__)
 
 #ifndef NDEBUG
-# define dbg(...) _log ("d", __VA_ARGS__)
+# define dbg(...) __write_msg ("d", __VA_ARGS__)
 #endif // NDEBUG
 
-#define log(...)  _log (" ", __VA_ARGS__)
-#define note(...) _log ("I", __VA_ARGS__)
-#define warn(...) _log ("W", __VA_ARGS__)
-#define err(...)  _log ("E", __VA_ARGS__)
-#define crit(...) do { _log ("C", __VA_ARGS__); if (!do_not_abort) abort(); } while (false)
+#define log(...)  __write_msg (" ", __VA_ARGS__)
+#define note(...) __write_msg ("I", __VA_ARGS__)
+#define warn(...) __write_msg ("W", __VA_ARGS__)
+#define err(...)  __write_msg ("E", __VA_ARGS__)
+#define crit(...) do { __write_msg ("C", __VA_ARGS__); if (!do_not_abort) abort(); } while (false)
 
 #define assert(exp, fmt, ...) do { if (!(exp)) crit ("Assertion failed: " #exp ": " fmt, ## __VA_ARGS__); } while (false)
 
