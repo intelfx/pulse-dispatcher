@@ -21,5 +21,8 @@ add_library(terminal STATIC terminal.cpp sinks/terminal.cpp sources/terminal.cpp
 add_library(ftdi STATIC sinks/ftdi_bitbang.cpp)
 target_link_libraries(ftdi ${ftdi_LIBRARIES})
 
+# "frequency" library -- source helper for doing periodic work
+add_library(frequency STATIC sources/frequency.cpp)
+
 add_executable(musiclights main.cpp)
 target_link_libraries(musiclights terminal ftdi core)
