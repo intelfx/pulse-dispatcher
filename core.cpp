@@ -148,13 +148,9 @@ void Core::run_sources()
 		main_thread_source->loop();
 	}
 
-	{
-		lock_guard_t L (operation_mutex_);
-
-		for (std::unique_ptr<AbstractSource>& source: sources_) {
-			if (source.get() != main_thread_source) {
-				source->join();
-			}
+	for (std::unique_ptr<AbstractSource>& source: sources_) {
+		if (source.get() != main_thread_source) {
+			source->join();
 		}
 	}
 }
