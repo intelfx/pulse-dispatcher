@@ -53,8 +53,8 @@ int main (int argc, char** argv)
 				std::getline (option_read_stream, name, '=');
 				std::getline (option_read_stream, value);
 
-				if (name.empty() || value.empty()) {
-					throw std::runtime_error ("malformed option: name or value is empty");
+				if (name.empty()) {
+					throw std::runtime_error ("malformed option: name is empty");
 				}
 
 				options.emplace (std::move (name), std::move (value));
