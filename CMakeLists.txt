@@ -24,5 +24,9 @@ target_link_libraries(ftdi ${ftdi_LIBRARIES})
 # "frequency" library -- source helper for doing periodic work
 add_library(frequency STATIC sources/frequency.cpp)
 
+# "soundfile" library -- sound file source
+add_library(soundfile STATIC sources/soundfile.cpp)
+target_link_libraries(soundfile frequency ${sndfile_LIBRARIES})
+
 add_executable(musiclights main.cpp)
-target_link_libraries(musiclights terminal ftdi core)
+target_link_libraries(musiclights terminal ftdi soundfile core)

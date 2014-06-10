@@ -4,6 +4,7 @@
 #include "sinks/terminal.h"
 #include "sinks/ftdi_bitbang.h"
 #include "sources/terminal.h"
+#include "sources/soundfile.h"
 
 #include <string>
 #include <sstream>
@@ -14,6 +15,8 @@ std::unique_ptr<AbstractSource> make_source (const std::string& name,
 {
 	if (name == "terminal" || name == "term") {
 		return std::unique_ptr<AbstractSource> (new TerminalSource);
+	} else if (name == "soundfile" || name == "sndfile") {
+		return std::unique_ptr<AbstractSource> (new SoundFileSource (options));
 	} else {
 		throw std::runtime_error ("unrecognized source name");
 	}
