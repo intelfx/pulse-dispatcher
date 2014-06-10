@@ -144,7 +144,9 @@ void Core::run_sources()
 		}
 	}
 
-	main_thread_source->loop();
+	if (main_thread_source) {
+		main_thread_source->loop();
+	}
 
 	{
 		lock_guard_t L (operation_mutex_);
