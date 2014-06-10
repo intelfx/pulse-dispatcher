@@ -8,7 +8,7 @@
 
 class AbstractSource
 {
-	channels_mask_t channels_;
+	channels_mask_t channels_claimed_;
 	std::thread thread_;
 
 protected:
@@ -25,7 +25,7 @@ public:
 	virtual bool runs_in_main_thread() const;
 
 	void set_channels (channels_mask_t channels);
-	channels_mask_t channels() const { return channels_; }
+	channels_mask_t channels() const { return channels_claimed_; }
 
 	virtual void loop() = 0;
 	void run();
