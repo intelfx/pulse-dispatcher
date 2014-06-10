@@ -17,11 +17,13 @@ SoundFileSource::SoundFileSource(const options_map_t& options)
 	, threshold_low_ (std::numeric_limits<sample_t>::max() * options.get_float ("th_low", DEFAULT_THRESHOLD_LOW))
 	, threshold_high_ (std::numeric_limits<sample_t>::max() * options.get_float ("th_high", DEFAULT_THRESHOLD_HIGH))
 	, pulse_width_ (options.get_int ("pulse", DEFAULT_PULSE_MSEC))
+	, play_file_ (options.get_bool ("play"))
 {
 	assert (!handle_.error(), "sndfile failed to open file '%s': %d (%s)",
 	        filename_.c_str(), handle_.error(), handle_.strError());
 
-	dbg ("playing file '%s' with threshold levels [%.2f; %.2f] and pulse width %d ms",
+	dbg ("reading%s file '%s' with threshold levels [%.2f; %.2f] and pulse width %d ms",
+	     play_file_ ? " and playing" : "",
 	     filename_.c_str(),
 	     options.get_float ("th_low", DEFAULT_THRESHOLD_LOW),
 	     options.get_float ("th_high", DEFAULT_THRESHOLD_HIGH),
@@ -37,10 +39,12 @@ bool SoundFileSource::check_sample (sample_t sample)
 
 void SoundFileSource::loop()
 {
-	char* call_string = nullptr;
-	asprintf (&call_string, "aplay -q \"%s\" &", filename_.c_str());
-	system (call_string);
-	free (call_string);
+	if (play_file_) {
+		char* call_string = nullptr;
+		asprintf (&call_string, "aplay -q \"%s\" &", filename_.c_str());
+		system (call_string);
+		free (call_string);
+	}
 
 	FrequencySource::loop();
 }
