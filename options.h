@@ -43,6 +43,32 @@ public:
 		}
 	}
 
+	bool get_bool (const std::string& name) const
+	{
+		auto it = find (name);
+
+		if (it == end()) {
+			return false;
+		}
+
+		const std::string& value = it->second;
+
+		if (value == "0"
+			|| value == "false"
+			|| value == "off") {
+			return false;
+		}
+
+		if (value.empty()
+			|| value == "1"
+			|| value == "true"
+			|| value == "on") {
+			return true;
+		}
+
+		throw std::runtime_error ("value is not valid boolean value");
+	}
+
 #define DEFAULT_WRAPPER(method, type)                                                         \
 	type method (const std::string& name, type default_value) const                           \
 		{ try { return method (name); } catch (std::exception& e) { return default_value; } }
