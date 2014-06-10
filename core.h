@@ -1,13 +1,14 @@
 #ifndef _CORE_H
 #define _CORE_H
 
+#include "options.h"
+
 #include <stdint.h>
 #include <stddef.h>
 #include <unistd.h>
 #include <vector>
 #include <memory>
 #include <mutex>
-#include <unordered_map>
 
 typedef uint32_t channels_mask_t;
 
@@ -15,8 +16,6 @@ static const size_t CHANNELS_MAX = sizeof (channels_mask_t) * 8;
 
 class AbstractSource;
 class AbstractSink;
-
-typedef std::unordered_map<std::string, std::string> options_map_t;
 
 class Core
 {

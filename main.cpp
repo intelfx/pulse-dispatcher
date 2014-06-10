@@ -61,12 +61,7 @@ int main (int argc, char** argv)
 			}
 
 			if (type == "source" || type == "src") {
-				auto channel_mask = options.find ("channels");
-				if (channel_mask == options.end()) {
-					throw std::runtime_error ("source designation does not have option 'channels'");
-				}
-
-				channels_mask_t source_channels = Core::string_to_mask (channel_mask->second.c_str());
+				channels_mask_t source_channels = Core::string_to_mask (options.get_string ("channels").c_str());
 				std::unique_ptr<AbstractSource> source = make_source (name, options);
 				Core::instance.add_source (std::move (source), source_channels);
 			} else if (type == "sink") {
