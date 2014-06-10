@@ -9,13 +9,18 @@
 #include <sstream>
 #include <stdexcept>
 
+void warn_excess_parameters (const std::string& name, const std::vector<std::string>& options, size_t used_parameters)
+{
+	if (options.size() > used_parameters) {
+		warn ("Creating source or sink '%s': %zu options left unused",
+		      name.c_str(), options.size() - used_parameters);
+	}
+}
+
 std::unique_ptr<AbstractSource> make_source (const std::string& name, const std::vector<std::string>& options)
 {
-	if (options.size() > 1) {
-		warn ("%zu source options left unused", options.size() - 1);
-	}
-
 	if (name == "terminal" || name == "term") {
+		warn_excess_parameters (name, options, 0);
 		return std::unique_ptr<AbstractSource> (new TerminalSource);
 	} else {
 		throw std::runtime_error ("unrecognized source name");
@@ -24,13 +29,11 @@ std::unique_ptr<AbstractSource> make_source (const std::string& name, const std:
 
 std::unique_ptr<AbstractSink> make_sink (const std::string& name, const std::vector<std::string>& options)
 {
-	if (options.size() > 0) {
-		warn ("%zu sink options left unused", options.size());
-	}
-
 	if (name == "terminal" || name == "term" || name == "dbg") {
+		warn_excess_parameters(name, options, 0);
 		return std::unique_ptr<AbstractSink> (new TerminalSink);
 	} else if (name == "ftdi") {
+		warn_excess_parameters(name, options, 0);
 		return std::unique_ptr<AbstractSink> (new FTDIBitbangSink);
 	} else {
 		throw std::runtime_error ("unrecognized sink name");
