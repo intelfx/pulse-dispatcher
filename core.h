@@ -32,6 +32,8 @@ class Core
 	channels_mask_t channels_taken_;
 	channels_mask_t channels_possible_;
 
+	bool core_is_destroying_;
+
 	void update_channels_count (size_t channels);
 	void edge_internal (channels_mask_t mask, bool value);
 
@@ -40,6 +42,7 @@ public:
 	~Core();
 
 	size_t channels_count() const { return channels_count_; }
+	bool is_destroying() const { return core_is_destroying_; }
 
 	void add_source (std::unique_ptr<AbstractSource> source, channels_mask_t channels = 0);
 	void add_sink (std::unique_ptr<AbstractSink> sink);

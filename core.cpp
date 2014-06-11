@@ -37,6 +37,7 @@ Core::Core()
 	, channels_ (0)
 	, channels_taken_ (0)
 	, channels_possible_ (0)
+	, core_is_destroying_ (false)
 {
 	set_terminate_signal (handle_terminate_signal);
 
@@ -48,6 +49,9 @@ Core::~Core()
 	log ("Core destroying");
 
 	set_terminate_signal (SIG_DFL);
+
+	core_is_destroying_ = true;
+	join_sources();
 }
 
 void Core::update_channels_count (size_t channels)
