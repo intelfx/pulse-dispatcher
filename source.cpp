@@ -21,7 +21,9 @@ void AbstractSource::run()
 
 void AbstractSource::join()
 {
-	thread_.join();
+	if (thread_.joinable()) {
+		thread_.join();
+	}
 }
 
 void AbstractSource::set_channels (channels_mask_t channels)
