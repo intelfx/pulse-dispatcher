@@ -79,4 +79,5 @@ int main (int argc, char** argv)
 	}
 
 	Core::instance.run_sources();
+	Core::instance.join_sources();
 }

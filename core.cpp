@@ -147,7 +147,10 @@ void Core::run_sources()
 	if (main_thread_source) {
 		main_thread_source->loop();
 	}
+}
 
+void Core::join_sources()
+{
 	for (std::unique_ptr<AbstractSource>& source: sources_) {
 		source->join();
 	}
