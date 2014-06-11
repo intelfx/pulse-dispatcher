@@ -17,10 +17,7 @@ void handle_terminate_signal (int sig)
 {
 	warn ("Exiting on receipt of signal %d (%s), disabling assertions", sig, sys_siglist[sig]);
 	do_not_abort = true;
-	Core::instance.~Core();
-
-	signal (sig, SIG_DFL);
-	raise (sig);
+	Core::instance.set_destroying();
 }
 
 void set_terminate_signal (sighandler_t handler)
@@ -49,9 +46,6 @@ Core::~Core()
 	log ("Core destroying");
 
 	set_terminate_signal (SIG_DFL);
-
-	core_is_destroying_ = true;
-	join_sources();
 }
 
 void Core::update_channels_count (size_t channels)
@@ -158,6 +152,13 @@ void Core::join_sources()
 	for (std::unique_ptr<AbstractSource>& source: sources_) {
 		source->join();
 	}
+}
+
+void Core::set_destroying()
+{
+	log ("Telling threads to stop");
+
+	core_is_destroying_ = true;
 }
 
 void Core::edge_internal (channels_mask_t mask, bool value)

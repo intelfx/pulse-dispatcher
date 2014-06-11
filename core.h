@@ -49,6 +49,7 @@ public:
 
 	void run_sources();
 	void join_sources();
+	void set_destroying();
 
 	void edge (channels_mask_t mask, bool value);
 	void pulse (channels_mask_t mask, std::chrono::milliseconds duration);
