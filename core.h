@@ -2,6 +2,7 @@
 #define _CORE_H
 
 #include "options.h"
+#include "common.h"
 
 #include <stdint.h>
 #include <stddef.h>
@@ -24,6 +25,7 @@ class Core
 	std::array<size_t, CHANNELS_MAX> channels_raise_counts_;
 
 	std::mutex operation_mutex_;
+	semaphore pulse_semaphore_;
 
 	typedef std::lock_guard<decltype(operation_mutex_)> lock_guard_t;
 

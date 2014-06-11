@@ -152,6 +152,8 @@ void Core::join_sources()
 	for (std::unique_ptr<AbstractSource>& source: sources_) {
 		source->join();
 	}
+
+	pulse_semaphore_.wait_for_zero();
 }
 
 void Core::set_destroying()
@@ -209,7 +211,8 @@ void Core::edge (channels_mask_t mask, bool value)
 
 void Core::pulse (channels_mask_t mask, std::chrono::milliseconds duration)
 {
-	std::thread pulse_thread ([this, mask, duration] () { edge (mask, 1); std::this_thread::sleep_for (duration); edge (mask, 0); });
+	std::thread pulse_thread ([this, mask, duration] ()
+	                          { semaphore::capture C (pulse_semaphore_); edge (mask, 1); std::this_thread::sleep_for (duration); edge (mask, 0); });
 	pulse_thread.detach();
 }
 
