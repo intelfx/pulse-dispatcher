@@ -6,7 +6,7 @@ namespace {
 
 size_t instance_count = 0;
 
-const std::chrono::milliseconds DEFAULT_PULSE (100);
+const std::chrono::milliseconds DEFAULT_PULSE (30);
 
 } // anonymous namespace
 
