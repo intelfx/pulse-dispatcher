@@ -16,7 +16,7 @@ void FrequencySource::loop()
 
 	const auto time_point = chrono_t::now();
 
-	for (ticks_t samples = 1;; ++samples) {
+	for (ticks_t samples = 1; !Core::instance.is_destroying(); ++samples) {
 		/* do work */
 		if (!single_iteration()) {
 			break;
