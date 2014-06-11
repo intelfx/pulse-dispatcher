@@ -1,8 +1,6 @@
 #include "log.h"
 #include <string.h>
 
-bool do_not_abort = false;
-
 const char* __file_name_pretty (const char* file_path)
 {
 	if (const char* file_name = strrchr (file_path, '/')) {

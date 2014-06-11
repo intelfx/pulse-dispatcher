@@ -15,8 +15,7 @@ const char* const CHANNEL_SYMBOL_MAP = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 void handle_terminate_signal (int sig)
 {
-	warn ("Exiting on receipt of signal %d (%s), disabling assertions", sig, sys_siglist[sig]);
-	do_not_abort = true;
+	warn ("Exiting on receipt of signal %d (%s)", sig, sys_siglist[sig]);
 	Core::instance.set_destroying();
 }
 
