@@ -5,6 +5,16 @@
 
 #include <mutex>
 #include <condition_variable>
+#include <chrono>
+
+namespace utils {
+
+typedef std::chrono::steady_clock clock;
+typedef clock::duration duration;
+typedef clock::period period;
+typedef clock::rep ticks;
+
+} // namespace utils
 
 typedef std::unique_lock<std::mutex> lock_guard_t;
 

@@ -9,21 +9,18 @@ void FrequencySource::set_frequency (unsigned freq)
 
 void FrequencySource::loop()
 {
-	typedef std::chrono::steady_clock chrono_t;
-	typedef chrono_t::rep             ticks_t;
-	typedef chrono_t::duration        duration_t;
-	typedef duration_t::period        period_t;
+	using utils::clock;
 
-	const auto time_point = chrono_t::now();
+	const clock::time_point start_point = clock::now();
 
-	for (ticks_t samples = 1; !Core::instance.is_destroying(); ++samples) {
+	for (clock::rep samples = 1; !Core::instance.is_destroying(); ++samples) {
 		/* do work */
 		if (!single_iteration()) {
 			break;
 		}
 
 		/* sleep until next tick */
-		ticks_t ticks = (samples * period_t::den) / (frequency_ * period_t::num);
-		std::this_thread::sleep_until (time_point + duration_t (ticks));
+		clock::rep ticks = (samples * clock::period::den) / (frequency_ * clock::period::num);
+		std::this_thread::sleep_until (start_point + clock::duration (ticks));
 	}
 }
