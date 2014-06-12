@@ -26,8 +26,6 @@ class Core
 	std::mutex operation_mutex_;
 	semaphore pulse_semaphore_;
 
-	typedef std::lock_guard<decltype(operation_mutex_)> lock_guard_t;
-
 	size_t channels_count_;
 	channels_mask_t channels_;
 	channels_mask_t channels_taken_;

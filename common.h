@@ -6,13 +6,13 @@
 #include <mutex>
 #include <condition_variable>
 
+typedef std::unique_lock<std::mutex> lock_guard_t;
+
 class semaphore
 {
 	std::mutex mutex_;
 	std::condition_variable wait_;
 	int count_;
-
-	typedef std::unique_lock<decltype(mutex_)> lock_guard_t;
 
 public:
 	void inc()
