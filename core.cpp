@@ -39,6 +39,11 @@ Core::Core()
 {
 	set_terminate_signal (handle_terminate_signal);
 
+	for (size_t i = 0; i < CHANNELS_MAX; ++i) {
+		 channel_worker_data& data = channels_workers_.at (i);
+		 data.mask = (1 << i);
+	}
+
 	log ("Core initialized");
 }
 
@@ -47,6 +52,41 @@ Core::~Core()
 	log ("Core destroying");
 
 	set_terminate_signal (SIG_DFL);
+}
+
+void Core::channel_worker (channel_worker_data& data)
+{
+	lock_guard_t L (data.mutex);
+
+	for (;;) {
+		while (!is_destroying() && data.queue.empty()) {
+			data.condvar.wait (L);
+		}
+
+		if (is_destroying()) {
+			return;
+		}
+
+		if (data.queue.empty()) {
+			continue;
+		}
+
+		utils::clock::time_point sleep_until = data.queue.front();
+		data.queue.pop();
+
+		if (!(sleep_until > utils::clock::now())) {
+			continue;
+		}
+
+		data.mutex.unlock();
+		edge (data.mask, true);
+		std::this_thread::sleep_until (sleep_until);
+		data.mutex.lock();
+
+		if (data.queue.empty()) {
+			edge (data.mask, false);
+		}
+	}
 }
 
 void Core::update_channels_count (size_t channels)
@@ -127,6 +167,15 @@ void Core::run_sources()
 		return;
 	}
 
+	log ("Starting per-channel threads");
+
+	for (size_t i = 0; i < channels_count_; ++i) {
+		channel_worker_data& data = channels_workers_.at (i);
+		data.worker = std::thread (&Core::channel_worker, this, std::reference_wrapper<channel_worker_data> (data));
+	}
+
+	log ("Starting source threads");
+
 	AbstractSource* main_thread_source = nullptr;
 
 	{
@@ -154,6 +203,15 @@ void Core::join_sources()
 		source->join();
 	}
 
+	set_destroying();
+
+	for (size_t i = 0; i < channels_count_; ++i) {
+		channel_worker_data& data = channels_workers_.at (i);
+		if (data.worker.joinable()) {
+			data.worker.join();
+		}
+	}
+
 	pulse_semaphore_.wait_for_zero();
 }
 
@@ -162,6 +220,11 @@ void Core::set_destroying()
 	log ("Telling threads to stop");
 
 	core_is_destroying_ = true;
+
+	for (size_t i = 0; i < channels_count_; ++i) {
+		channel_worker_data& data = channels_workers_.at (i);
+		data.condvar.notify_all();
+	}
 }
 
 void Core::edge (channels_mask_t mask, bool value)
@@ -186,9 +249,20 @@ void Core::edge (channels_mask_t mask, bool value)
 
 void Core::pulse (channels_mask_t mask, std::chrono::milliseconds duration)
 {
-	std::thread pulse_thread ([this, mask, duration] ()
-	                          { semaphore::capture C (pulse_semaphore_); edge (mask, 1); std::this_thread::sleep_for (duration); edge (mask, 0); });
-	pulse_thread.detach();
+	utils::clock::time_point pulse_end_time = utils::clock::now() + duration;
+
+	for (size_t i = 0; i < CHANNELS_MAX; ++i) {
+		if (bit_enabled (mask, i)) {
+			channel_worker_data& data = channels_workers_.at (i);
+
+			{
+				lock_guard_t L (data.mutex);
+				data.queue.emplace (pulse_end_time);
+			}
+
+			data.condvar.notify_all();
+		}
+	}
 }
 
 char Core::channel_to_symbol (size_t channel)

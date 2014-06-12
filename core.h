@@ -9,7 +9,9 @@
 #include <unistd.h>
 #include <vector>
 #include <memory>
-#include <mutex>
+#include <thread>
+#include <deque>
+#include <queue>
 
 typedef uint32_t channels_mask_t;
 
@@ -23,6 +25,17 @@ class Core
 	std::vector<std::unique_ptr<AbstractSource>> sources_;
 	std::vector<std::unique_ptr<AbstractSink>> sinks_;
 
+	struct channel_worker_data {
+		channels_mask_t mask;
+		std::thread worker;
+		std::mutex mutex;
+		std::condition_variable condvar;
+		std::queue<utils::clock::time_point> queue;
+
+	};
+
+	std::array<channel_worker_data, CHANNELS_MAX> channels_workers_;
+
 	std::mutex operation_mutex_;
 	semaphore pulse_semaphore_;
 
@@ -34,6 +47,8 @@ class Core
 	bool core_is_destroying_;
 
 	void update_channels_count (size_t channels);
+
+	void channel_worker (channel_worker_data& data);
 
 public:
 	Core();
