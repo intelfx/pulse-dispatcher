@@ -17,6 +17,8 @@ void handle_terminate_signal (int sig)
 {
 	warn ("Exiting on receipt of signal %d (%s)", sig, sys_siglist[sig]);
 	Core::instance.set_destroying();
+
+	signal (sig, SIG_DFL);
 }
 
 void set_terminate_signal (sighandler_t handler)
