@@ -22,7 +22,6 @@ class Core
 {
 	std::vector<std::unique_ptr<AbstractSource>> sources_;
 	std::vector<std::unique_ptr<AbstractSink>> sinks_;
-	std::array<size_t, CHANNELS_MAX> channels_raise_counts_;
 
 	std::mutex operation_mutex_;
 	semaphore pulse_semaphore_;
@@ -37,7 +36,6 @@ class Core
 	bool core_is_destroying_;
 
 	void update_channels_count (size_t channels);
-	void edge_internal (channels_mask_t mask, bool value);
 
 public:
 	Core();

@@ -162,8 +162,15 @@ void Core::set_destroying()
 	core_is_destroying_ = true;
 }
 
-void Core::edge_internal (channels_mask_t mask, bool value)
+void Core::edge (channels_mask_t mask, bool value)
 {
+	lock_guard_t L (operation_mutex_);
+
+	assert (check_in_mask (mask, channels_taken_),
+	        "Wrong channel set to activate: some channels are not taken");
+
+	// TODO: "ref"-counting (count number of rising edges) to allow recursive rise/falls
+	//       and, ultimately, to allow controlling same channel from multiple sources.
 	if (value) {
 		channels_ |= mask;
 	} else {
@@ -173,39 +180,6 @@ void Core::edge_internal (channels_mask_t mask, bool value)
 	for (std::unique_ptr<AbstractSink>& sink: sinks_) {
 		sink->set (channels_);
 	}
-}
-
-void Core::edge (channels_mask_t mask, bool value)
-{
-	lock_guard_t L (operation_mutex_);
-
-	assert (check_in_mask (mask, channels_taken_),
-	        "Wrong channel set to activate: some channels are not taken");
-
-	channels_mask_t actual_mask = 0;
-
-	for (size_t i = 0; i < CHANNELS_MAX; ++i) {
-		if (bit_enabled (mask, i)) {
-			if (value) {
-				if (!channels_raise_counts_[i]++) {
-					bit_set (actual_mask, i);
-				}
-			} else {
-				assert (channels_raise_counts_[i],
-				        "Rise-fall imbalance: trying to put channel %zu while it's already down",
-				        i);
-
-				if (!--channels_raise_counts_[i]) {
-					bit_set (actual_mask, i);
-				}
-			}
-		}
-	}
-
-	assert (check_in_mask (actual_mask, mask),
-	        "Rise-fall logic failure: trying to raise/put channels which are not part of initial request");
-
-	edge_internal (actual_mask, value);
 }
 
 void Core::pulse (channels_mask_t mask, std::chrono::milliseconds duration)
