@@ -58,13 +58,9 @@ void Core::channel_worker (channel_worker_data& data)
 {
 	lock_guard_t L (data.mutex);
 
-	for (;;) {
+	for (; !is_destroying();) {
 		while (!is_destroying() && data.queue.empty()) {
 			data.condvar.wait (L);
-		}
-
-		if (is_destroying()) {
-			return;
 		}
 
 		if (data.queue.empty()) {
