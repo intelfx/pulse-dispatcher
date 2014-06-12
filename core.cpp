@@ -270,10 +270,12 @@ void Core::edge (channels_mask_t mask, bool value)
 		}
 	}
 
-	assert (check_in_mask (actual_mask, mask),
-	        "Rise-fall logic failure: trying to raise/put channels which are not part of initial request");
+	if (actual_mask) {
+		assert (check_in_mask (actual_mask, mask),
+		        "Rise-fall logic failure: trying to raise/put channels which are not part of initial request");
 
-	edge_internal (actual_mask, value);
+		edge_internal (actual_mask, value);
+	}
 }
 
 void Core::pulse (channels_mask_t mask, std::chrono::milliseconds duration)
