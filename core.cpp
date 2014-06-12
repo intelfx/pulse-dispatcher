@@ -213,13 +213,15 @@ void Core::join_sources()
 
 void Core::set_destroying()
 {
-	log ("Telling threads to stop");
+	if (!core_is_destroying_) {
+		log ("Telling threads to stop");
 
-	core_is_destroying_ = true;
+		core_is_destroying_ = true;
 
-	for (size_t i = 0; i < channels_count_; ++i) {
-		channel_worker_data& data = channels_workers_.at (i);
-		data.condvar.notify_all();
+		for (size_t i = 0; i < channels_count_; ++i) {
+			channel_worker_data& data = channels_workers_.at (i);
+			data.condvar.notify_all();
+		}
 	}
 }
 
