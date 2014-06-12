@@ -57,6 +57,7 @@ Core::~Core()
 void Core::channel_worker (channel_worker_data& data)
 {
 	lock_guard_t L (data.mutex);
+	bool state = false;
 
 	for (; !is_destroying();) {
 		while (!is_destroying() && data.queue.empty()) {
@@ -75,11 +76,15 @@ void Core::channel_worker (channel_worker_data& data)
 		}
 
 		data.mutex.unlock();
-		edge (data.mask, true);
+		if (!state) {
+			state = true;
+			edge (data.mask, true);
+		}
 		std::this_thread::sleep_until (sleep_until);
 		data.mutex.lock();
 
 		if (data.queue.empty()) {
+			state = false;
 			edge (data.mask, false);
 		}
 	}
