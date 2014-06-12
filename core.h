@@ -24,6 +24,7 @@ class Core
 {
 	std::vector<std::unique_ptr<AbstractSource>> sources_;
 	std::vector<std::unique_ptr<AbstractSink>> sinks_;
+	std::array<size_t, CHANNELS_MAX> channels_raise_counts_;
 
 	struct channel_worker_data {
 		channels_mask_t mask;
@@ -47,6 +48,7 @@ class Core
 	bool core_is_destroying_;
 
 	void update_channels_count (size_t channels);
+	void edge_internal (channels_mask_t mask, bool value);
 
 	void channel_worker (channel_worker_data& data);
 
