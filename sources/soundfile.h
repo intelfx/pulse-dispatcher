@@ -22,6 +22,7 @@ class SoundFileSource: public FrequencySource
 public:
 	SoundFileSource (const options_map_t& options);
 
+protected:
 	virtual void loop();
 	virtual bool single_iteration();
 };

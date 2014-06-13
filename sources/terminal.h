@@ -13,7 +13,9 @@ public:
 	TerminalSource();
 	virtual ~TerminalSource();
 
-	bool runs_in_main_thread() const;
+	virtual bool runs_in_main_thread() const;
+
+protected:
 	virtual void loop();
 };
 

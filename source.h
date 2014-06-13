@@ -17,6 +17,8 @@ protected:
 	void edge_m (channels_mask_t mask, bool value);
 	void pulse_m (channels_mask_t mask, std::chrono::milliseconds duration);
 
+	virtual void loop() = 0;
+
 public:
 	AbstractSource();
 	virtual ~AbstractSource();
@@ -26,7 +28,6 @@ public:
 	void set_channels (channels_mask_t channels);
 	channels_mask_t channels() const { return channels_claimed_; }
 
-	virtual void loop() = 0;
 	void run_thread();
 	void run_loop();
 	void join();

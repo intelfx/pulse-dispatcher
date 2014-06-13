@@ -10,7 +10,6 @@ class FrequencySource: public AbstractSource
 protected:
 	void set_frequency (unsigned freq);
 
-public:
 	virtual void loop();
 	virtual bool single_iteration() = 0;
 };
