@@ -1,5 +1,5 @@
 #include "terminal.h"
-#include <common.h>
+#include <core.h>
 #include <terminal.h>
 
 namespace {

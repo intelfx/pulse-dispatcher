@@ -2,6 +2,7 @@
 #define _SOURCE_SOUNDFILE_H
 
 #include "frequency.h"
+#include <options.h>
 
 #include <sndfile.hh>
 

@@ -1,10 +1,7 @@
 #ifndef _SOURCE_H
 #define _SOURCE_H
 
-#include <stdint.h>
-#include <thread>
-
-#include "core.h"
+#include "common.h"
 
 class AbstractSource
 {

@@ -1,7 +1,7 @@
 #ifndef _SINK_H
 #define _SINK_H
 
-#include "core.h"
+#include "common.h"
 
 class AbstractSink
 {

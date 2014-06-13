@@ -1,5 +1,5 @@
 #include "frequency.h"
-#include <common.h>
+#include <core.h>
 
 void FrequencySource::set_frequency (unsigned freq)
 {

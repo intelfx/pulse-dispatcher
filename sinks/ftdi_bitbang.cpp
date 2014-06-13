@@ -1,6 +1,4 @@
 #include "ftdi_bitbang.h"
-#include <log.h>
-#include <common.h>
 
 #include <ftdi.h>
 

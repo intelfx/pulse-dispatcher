@@ -1,21 +1,15 @@
 #ifndef _CORE_H
 #define _CORE_H
 
-#include "options.h"
 #include "common.h"
+#include "options.h"
 
 #include <stdint.h>
 #include <stddef.h>
 #include <unistd.h>
 #include <vector>
-#include <memory>
-#include <thread>
 #include <deque>
 #include <queue>
-
-typedef uint32_t channels_mask_t;
-
-static const size_t CHANNELS_MAX = sizeof (channels_mask_t) * 8;
 
 class AbstractSource;
 class AbstractSink;

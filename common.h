@@ -3,9 +3,15 @@
 
 #include "log.h"
 
-#include <mutex>
-#include <condition_variable>
 #include <chrono>
+#include <condition_variable>
+#include <memory>
+#include <mutex>
+#include <thread>
+
+typedef uint32_t channels_mask_t;
+
+static const size_t CHANNELS_MAX = sizeof (channels_mask_t) * 8;
 
 namespace utils {
 

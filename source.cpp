@@ -1,7 +1,5 @@
 #include "source.h"
-#include "log.h"
-
-#include <thread>
+#include "core.h"
 
 AbstractSource::AbstractSource()
 	: channels_claimed_ (0)
