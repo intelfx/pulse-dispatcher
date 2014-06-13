@@ -3,13 +3,12 @@
 
 #include "common.h"
 #include "options.h"
+#include "pulse_worker.h"
 
 #include <stdint.h>
 #include <stddef.h>
 #include <unistd.h>
 #include <vector>
-#include <deque>
-#include <queue>
 
 class AbstractSource;
 class AbstractSink;
@@ -19,17 +18,7 @@ class Core
 	std::vector<std::unique_ptr<AbstractSource>> sources_;
 	std::vector<std::unique_ptr<AbstractSink>> sinks_;
 	std::array<size_t, CHANNELS_MAX> channels_raise_counts_;
-
-	struct channel_worker_data {
-		channels_mask_t mask;
-		std::thread worker;
-		std::mutex mutex;
-		std::condition_variable condvar;
-		std::queue<utils::clock::time_point> queue;
-
-	};
-
-	std::array<channel_worker_data, CHANNELS_MAX> channels_workers_;
+	std::vector<pulse_worker> channels_workers_;
 
 	std::mutex operation_mutex_;
 	semaphore pulse_semaphore_;
@@ -43,8 +32,6 @@ class Core
 
 	void update_channels_count (size_t channels);
 	void edge_internal (channels_mask_t mask, bool value);
-
-	void channel_worker (channel_worker_data& data);
 
 public:
 	Core();

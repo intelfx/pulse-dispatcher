@@ -11,7 +11,7 @@ pkg_check_modules(ftdi REQUIRED libftdi1)
 list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
 
 # "core" library -- log engine, dispatcher (core), abstract source and sink
-add_library(core STATIC core.cpp sink.cpp source.cpp log.cpp options.cpp)
+add_library(core STATIC core.cpp sink.cpp source.cpp log.cpp options.cpp pulse_worker.cpp)
 target_link_libraries(core pthread)
 
 # "terminal" library -- POSIX terminal-based source and sink
