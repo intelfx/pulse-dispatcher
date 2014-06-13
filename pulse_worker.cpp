@@ -11,6 +11,7 @@ pulse_worker::pulse_worker (pulse_worker&& rhs)
 	, mutex()
 	, condvar()
 	, queue()
+	, destroying (false)
 { }
 
 void pulse_worker::add_to_queue (std::chrono::_V2::steady_clock::time_point pulse_end)
@@ -26,10 +27,8 @@ void pulse_worker::loop()
 	lock_guard_t L (mutex);
 	bool state = false;
 
-	for (; !Core::instance.is_destroying();) {
-		while (!Core::instance.is_destroying() && queue.empty()) {
-			condvar.wait (L);
-		}
+	for (; !destroying; ) {
+		condvar.wait (L, [this] () { return destroying || !queue.empty(); });
 
 		if (queue.empty()) {
 			continue;
@@ -55,11 +54,17 @@ void pulse_worker::loop()
 
 void pulse_worker::run()
 {
+	destroying = false;
 	thread = std::thread (&pulse_worker::loop, this);
 }
 
 void pulse_worker::join()
 {
+	lock_guard_t L (mutex);
+	destroying = true;
+	L.unlock();
+	condvar.notify_all();
+
 	if (thread.joinable()) {
 		thread.join();
 	}

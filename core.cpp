@@ -171,8 +171,6 @@ void Core::join_sources()
 		source->join();
 	}
 
-	set_destroying();
-
 	for (pulse_worker& worker: channels_workers_) {
 		worker.join();
 	}
@@ -182,12 +180,7 @@ void Core::set_destroying()
 {
 	if (!core_is_destroying_) {
 		log ("Telling threads to stop");
-
 		core_is_destroying_ = true;
-
-		for (pulse_worker& worker: channels_workers_) {
-			worker.condvar.notify_all();
-		}
 	}
 }
 

@@ -12,6 +12,7 @@ struct pulse_worker
 	std::mutex mutex;
 	std::condition_variable condvar;
 	std::queue<utils::clock::time_point> queue;
+	bool destroying;
 
 	pulse_worker (channels_mask_t channels = 0);
 	pulse_worker (pulse_worker&& rhs); // WARNING: moves only mask, everything else is expected to be empty
