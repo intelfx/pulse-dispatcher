@@ -176,8 +176,6 @@ void Core::join_sources()
 	for (pulse_worker& worker: channels_workers_) {
 		worker.join();
 	}
-
-	pulse_semaphore_.wait_for_zero();
 }
 
 void Core::set_destroying()

@@ -21,7 +21,6 @@ class Core
 	std::vector<pulse_worker> channels_workers_;
 
 	std::mutex operation_mutex_;
-	semaphore pulse_semaphore_;
 
 	size_t channels_count_;
 	channels_mask_t channels_;
