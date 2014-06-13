@@ -76,7 +76,8 @@ void Core::update_channels_count (size_t channels)
 		for (size_t i = channels_workers_.size(); i < channels; ++i) {
 			channels_workers_.emplace_back (1 << i);
 		}
-		assert (channels_workers_.size() == channels, "Logic error while resizing channel workers vector");
+		assert (channels_workers_.size() == channels,
+		        "Logic error while resizing channel workers vector");
 	} else {
 		channels_workers_.resize (channels); // shrink only
 	}
@@ -108,7 +109,7 @@ void Core::add_source (std::unique_ptr<AbstractSource> source, channels_mask_t c
 	size_t channels_required = find_highest_set_bit (source->channels()) + 1;
 
 	note ("Adding source '%s' (%zu channels)",
-		  typeid (*source.get()).name(),
+	      typeid (*source.get()).name(),
 	      channels_required);
 
 	update_channels_count (std::max (channels_count_, channels_required));
