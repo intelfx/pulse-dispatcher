@@ -153,12 +153,12 @@ void Core::run_sources()
 			        "More than one source wants to run in main thread");
 			main_thread_source = source.get();
 		} else {
-			source->run();
+			source->run_thread();
 		}
 	}
 
 	if (main_thread_source) {
-		main_thread_source->loop();
+		main_thread_source->run_loop();
 	}
 }
 

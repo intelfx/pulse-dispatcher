@@ -12,10 +12,17 @@ bool AbstractSource::runs_in_main_thread() const
 	return false;
 }
 
-void AbstractSource::run()
+void AbstractSource::run_thread()
 {
 	worker_.run();
 	thread_ = std::thread (&AbstractSource::loop, this);
+}
+
+void AbstractSource::run_loop()
+{
+	worker_.run();
+	loop();
+	worker_.join();
 }
 
 void AbstractSource::join()

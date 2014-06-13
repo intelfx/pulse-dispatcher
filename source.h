@@ -27,7 +27,8 @@ public:
 	channels_mask_t channels() const { return channels_claimed_; }
 
 	virtual void loop() = 0;
-	void run();
+	void run_thread();
+	void run_loop();
 	void join();
 };
 
