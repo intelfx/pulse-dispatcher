@@ -17,6 +17,7 @@ void pulse_worker::add_to_queue (std::chrono::_V2::steady_clock::time_point puls
 {
 	lock_guard_t L (mutex);
 	queue.emplace (pulse_end);
+	L.unlock();
 	condvar.notify_all();
 }
 
