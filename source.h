@@ -2,11 +2,13 @@
 #define _SOURCE_H
 
 #include "common.h"
+#include "pulse_worker.h"
 
 class AbstractSource
 {
 	channels_mask_t channels_claimed_;
 	std::thread thread_;
+	pulse_worker worker_;
 
 protected:
 	void edge (bool value);

@@ -14,6 +14,7 @@ bool AbstractSource::runs_in_main_thread() const
 
 void AbstractSource::run()
 {
+	worker_.run();
 	thread_ = std::thread (&AbstractSource::loop, this);
 }
 
@@ -22,11 +23,13 @@ void AbstractSource::join()
 	if (thread_.joinable()) {
 		thread_.join();
 	}
+	worker_.join();
 }
 
 void AbstractSource::set_channels (channels_mask_t channels)
 {
 	channels_claimed_ = channels;
+	worker_.mask = channels;
 }
 
 void AbstractSource::edge (bool value)
@@ -36,7 +39,7 @@ void AbstractSource::edge (bool value)
 
 void AbstractSource::pulse (std::chrono::milliseconds duration)
 {
-	Core::instance.pulse (channels_claimed_, duration);
+	worker_.add_to_queue (utils::clock::now() + duration);
 }
 
 void AbstractSource::edge_m (channels_mask_t mask, bool value)
