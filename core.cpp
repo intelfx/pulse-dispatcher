@@ -146,17 +146,13 @@ void Core::run_sources()
 
 	AbstractSource* main_thread_source = nullptr;
 
-	{
-		lock_guard_t L (operation_mutex_);
-
-		for (std::unique_ptr<AbstractSource>& source: sources_) {
-			if (source->runs_in_main_thread()) {
-				assert (!main_thread_source,
-				        "More than one source wants to run in main thread");
-				main_thread_source = source.get();
-			} else {
-				source->run();
-			}
+	for (std::unique_ptr<AbstractSource>& source: sources_) {
+		if (source->runs_in_main_thread()) {
+			assert (!main_thread_source,
+			        "More than one source wants to run in main thread");
+			main_thread_source = source.get();
+		} else {
+			source->run();
 		}
 	}
 
