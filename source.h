@@ -27,6 +27,7 @@ public:
 
 	void set_channels (channels_mask_t channels);
 	channels_mask_t channels() const { return channels_claimed_; }
+	size_t channels_count() const { return find_highest_set_bit (channels()) + 1; }
 
 	void run_thread();
 	void run_loop();

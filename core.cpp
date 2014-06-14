@@ -89,10 +89,8 @@ void Core::add_sink (std::unique_ptr<AbstractSink> sink)
 {
 	lock_guard_t L (operation_mutex_);
 
-	note ("Adding sink '%s' (%zu channels)",
+	note ("Adding sink '%s' (max %zu channels)",
 	      typeid (*sink.get()).name(), sink->channels());
-
-	update_channels_count (std::min (channels_count_, sink->channels()));
 
 	sink->set (channels_);
 	sinks_.push_back (std::move (sink));
@@ -106,17 +104,9 @@ void Core::add_source (std::unique_ptr<AbstractSource> source, channels_mask_t c
 		source->set_channels (channels);
 	}
 
-	size_t channels_required = find_highest_set_bit (source->channels()) + 1;
-
-	note ("Adding source '%s' (%zu channels)",
+	note ("Adding source '%s' (needs %zu channels)",
 	      typeid (*source.get()).name(),
-	      channels_required);
-
-	update_channels_count (std::max (channels_count_, channels_required));
-
-	assert (check_in_mask (source->channels(), channels_possible_),
-	        "Cannot add source: failed to change channel count",
-	        channels_count_);
+	      source->channels_count());
 
 	assert (!(source->channels() & channels_taken_),
 	        "Cannot add source: channel sets overlap");
@@ -136,6 +126,14 @@ void Core::run_sources()
 		err ("No sinks registered -- nothing to do");
 		return;
 	}
+
+	size_t channels_required = 0;
+	for (std::unique_ptr<AbstractSource>& source: sources_) {
+		channels_required = std::max (channels_required, source->channels_count());
+	}
+	update_channels_count (channels_required);
+	assert (check_in_mask (channels_taken_, channels_possible_),
+	        "Logic error while setting channel count");
 
 	log ("Starting per-channel worker threads");
 
