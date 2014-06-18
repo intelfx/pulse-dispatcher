@@ -28,6 +28,7 @@ class Core
 	channels_mask_t channels_possible_;
 
 	bool core_is_destroying_;
+	pulse_worker::pulse_mode pulse_worker_mode_;
 
 	void update_channels_count (size_t channels);
 	void edge_internal (channels_mask_t mask, bool value);

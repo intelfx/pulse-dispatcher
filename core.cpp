@@ -36,6 +36,7 @@ Core::Core()
 	, channels_taken_ (0)
 	, channels_possible_ (0)
 	, core_is_destroying_ (false)
+	, pulse_worker_mode_ (pulse_worker::MODE_DEFAULT)
 {
 	set_terminate_signal (handle_terminate_signal);
 
@@ -117,6 +118,9 @@ void Core::add_source (std::unique_ptr<AbstractSource> source, channels_mask_t c
 
 void Core::set_options (const options_map_t& options)
 {
+	if (options.get_bool ("single")) {
+		pulse_worker_mode_ = pulse_worker::MODE_SINGLE_PULSE;
+	}
 }
 
 void Core::run_sources()
@@ -142,6 +146,7 @@ void Core::run_sources()
 	log ("Starting per-channel worker threads");
 
 	for (pulse_worker& worker: channels_workers_) {
+		worker.mode = pulse_worker_mode_;
 		worker.run();
 	}
 
