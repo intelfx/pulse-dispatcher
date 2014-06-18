@@ -36,10 +36,18 @@ bool TerminalSource::runs_in_main_thread() const
 	return true;
 }
 
-void TerminalSource::toggle (channels_mask_t mask)
+void TerminalSource::toggle()
 {
-	mask &= channels();
+	toggle_internal (channels());
+}
 
+void TerminalSource::toggle_m (channels_mask_t mask)
+{
+	toggle_internal (channels() & mask);
+}
+
+void TerminalSource::toggle_internal (channels_mask_t mask)
+{
 	channels_mask_t to_disable =  toggle_mode_channels_ & mask,
 	                to_enable  = ~toggle_mode_channels_ & mask;
 
@@ -57,21 +65,31 @@ void TerminalSource::loop()
 	for (;;) {
 		input = getchar();
 
-		if (input == EOF) {
+		switch (input) {
+		case EOF:
+		case '`':
 			return;
-		} else if (input == '`') {
-			return;
-		} else if (input == '-') {
-			pulse (pulse_width_);
-		} else {
-			channel = Core::symbol_to_channel (input);
-			if (channel >= 0) {
-				if (toggle_) {
-					toggle (1 << channel);
-				} else {
-					pulse_m (1 << channel, pulse_width_);
-				}
+
+		case '-':
+			if (toggle_) {
+				toggle();
+			} else {
+				pulse (pulse_width_);
 			}
+			break;
+
+		default:
+			channel = Core::symbol_to_channel (input);
+			if (channel < 0) {
+				break;
+			}
+
+			if (toggle_) {
+				toggle_m (1 << channel);
+			} else {
+				pulse_m (1 << channel, pulse_width_);
+			}
+			break;
 		}
 	}
 }

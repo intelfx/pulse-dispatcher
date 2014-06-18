@@ -10,7 +10,9 @@ class TerminalSource: public AbstractSource
 	bool toggle_;
 	std::chrono::milliseconds pulse_width_;
 
-	void toggle (channels_mask_t mask);
+	void toggle();
+	void toggle_m (channels_mask_t mask);
+	void toggle_internal (channels_mask_t mask);
 
 public:
 	TerminalSource(const options_map_t& options);
