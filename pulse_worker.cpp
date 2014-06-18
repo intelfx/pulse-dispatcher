@@ -1,9 +1,10 @@
 #include "pulse_worker.h"
 #include "core.h"
 
-pulse_worker::pulse_worker (channels_mask_t channels)
+pulse_worker::pulse_worker (channels_mask_t channels, pulse_mode m)
 	: mask (channels)
 	, destroying (false)
+	, mode (m)
 { }
 
 pulse_worker::pulse_worker (pulse_worker&& rhs)
@@ -13,6 +14,7 @@ pulse_worker::pulse_worker (pulse_worker&& rhs)
 	, condvar()
 	, queue()
 	, destroying (false)
+	, mode (rhs.mode)
 { }
 
 void pulse_worker::add_to_queue (std::chrono::_V2::steady_clock::time_point pulse_end)
@@ -27,28 +29,36 @@ void pulse_worker::loop()
 {
 	lock_guard_t L (mutex);
 	bool state = false;
+	bool ignore_next_pulse = false;
 
-	for (; !destroying; ) {
+	while (!destroying) {
 		condvar.wait (L, [this] () { return destroying || !queue.empty(); });
 
 		if (queue.empty()) {
-			continue;
+			continue; // and check `destroying` as part of the while-condition
 		}
 
 		utils::clock::time_point sleep_until = queue.front();
 		queue.pop();
 
 		mutex.unlock();
-		if (!state) {
+		if (!state && !ignore_next_pulse) {
+			if (mode == MODE_SINGLE_PULSE) {
+				ignore_next_pulse = true;
+			}
 			state = true;
 			Core::instance.edge (mask, true);
 		}
 		std::this_thread::sleep_until (sleep_until);
 		mutex.lock();
 
-		if (queue.empty()) {
+		if (state && (queue.empty() || ignore_next_pulse)) {
 			state = false;
 			Core::instance.edge (mask, false);
+		}
+
+		if (queue.empty() && ignore_next_pulse) {
+			ignore_next_pulse = false;
 		}
 	}
 }
