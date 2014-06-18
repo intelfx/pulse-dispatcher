@@ -11,8 +11,9 @@ const long DEFAULT_PULSE_MSEC = 30;
 
 } // anonymous namespace
 
-SoundFileSource::SoundFileSource(const options_map_t& options)
-	: filename_ (options.get_string ("file"))
+SoundFileSource::SoundFileSource (const options_map_t& options)
+	: FrequencySource (options)
+	, filename_ (options.get_string ("file"))
 	, handle_ (filename_)
 	, threshold_low_ (std::numeric_limits<sample_t>::max() * options.get_float ("th_low", DEFAULT_THRESHOLD_LOW))
 	, threshold_high_ (std::numeric_limits<sample_t>::max() * options.get_float ("th_high", DEFAULT_THRESHOLD_HIGH))

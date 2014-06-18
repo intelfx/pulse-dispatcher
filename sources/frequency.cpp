@@ -1,6 +1,10 @@
 #include "frequency.h"
 #include <core.h>
 
+FrequencySource::FrequencySource (const options_map_t& options)
+	: AbstractSource (options)
+{ }
+
 void FrequencySource::set_frequency (unsigned freq)
 {
 	dbg ("setting frequency to %u Hz", freq);

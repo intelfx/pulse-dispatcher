@@ -11,7 +11,8 @@ const long DEFAULT_PULSE_MSEC = 30;
 } // anonymous namespace
 
 TerminalSource::TerminalSource (const options_map_t& options)
-	: toggle_mode_channels_ (0)
+	: AbstractSource (options)
+	, toggle_mode_channels_ (0)
 	, toggle_ (options.get_bool ("toggle"))
 	, pulse_width_ (options.get_int ("pulse", DEFAULT_PULSE_MSEC))
 {

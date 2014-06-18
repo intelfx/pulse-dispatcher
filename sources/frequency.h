@@ -8,6 +8,8 @@ class FrequencySource: public AbstractSource
 	unsigned frequency_;
 
 protected:
+	FrequencySource (const options_map_t& options);
+
 	void set_frequency (unsigned freq);
 
 	virtual void loop();

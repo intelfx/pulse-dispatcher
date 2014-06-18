@@ -1,8 +1,10 @@
 #include "source.h"
 #include "core.h"
 
-AbstractSource::AbstractSource()
+AbstractSource::AbstractSource(const options_map_t& options)
 	: channels_claimed_ (0)
+	, worker_ (0, options.get_bool ("single") ? pulse_worker::MODE_SINGLE_PULSE
+	                                          : pulse_worker::MODE_DEFAULT)
 	{ }
 
 AbstractSource::~AbstractSource() = default;

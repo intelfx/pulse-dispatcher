@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "pulse_worker.h"
+#include "options.h"
 
 class AbstractSource
 {
@@ -20,7 +21,7 @@ protected:
 	virtual void loop() = 0;
 
 public:
-	AbstractSource();
+	AbstractSource (const options_map_t& options);
 	virtual ~AbstractSource();
 
 	virtual bool runs_in_main_thread() const;
