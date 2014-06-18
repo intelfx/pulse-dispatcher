@@ -45,7 +45,14 @@ int main (int argc, char** argv)
 			options_map_t options;
 
 			std::getline (argument_read_stream, type, ':');
-			std::getline (argument_read_stream, name, ':');
+
+			if (type == "source" || type == "sink") {
+				std::getline (argument_read_stream, name, ':');
+			} else if (type == "options") {
+				/* no-op */
+			} else {
+				throw std::runtime_error ("type is not 'source', 'sink' or 'options'");
+			}
 
 			while (!argument_read_stream.eof()) {
 				std::string option;
@@ -63,15 +70,15 @@ int main (int argc, char** argv)
 				options.emplace (std::move (name), std::move (value));
 			}
 
-			if (type == "source" || type == "src") {
+			if (type == "source") {
 				channels_mask_t source_channels = Core::string_to_mask (options.get_string ("channels").c_str());
 				std::unique_ptr<AbstractSource> source = make_source (name, options);
 				Core::instance.add_source (std::move (source), source_channels);
 			} else if (type == "sink") {
 				std::unique_ptr<AbstractSink> sink = make_sink (name, options);
 				Core::instance.add_sink (std::move (sink));
-			} else {
-				throw std::runtime_error ("type is not 'source' or 'sink'");
+			} else if (type == "options") {
+				Core::instance.set_options (options);
 			}
 		} catch (std::exception& e) {
 			crit ("Invalid argument '%s': %s", argv[i], e.what());

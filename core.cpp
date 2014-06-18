@@ -115,6 +115,10 @@ void Core::add_source (std::unique_ptr<AbstractSource> source, channels_mask_t c
 	sources_.push_back (std::move (source));
 }
 
+void Core::set_options (const options_map_t& options)
+{
+}
+
 void Core::run_sources()
 {
 	if (sources_.empty()) {

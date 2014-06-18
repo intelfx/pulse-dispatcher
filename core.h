@@ -41,6 +41,7 @@ public:
 
 	void add_source (std::unique_ptr<AbstractSource> source, channels_mask_t channels = 0);
 	void add_sink (std::unique_ptr<AbstractSink> sink);
+	void set_options (const options_map_t& options);
 
 	void run_sources();
 	void join_sources();
