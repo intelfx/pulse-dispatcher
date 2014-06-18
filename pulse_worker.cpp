@@ -3,6 +3,7 @@
 
 pulse_worker::pulse_worker (channels_mask_t channels)
 	: mask (channels)
+	, destroying (false)
 { }
 
 pulse_worker::pulse_worker (pulse_worker&& rhs)
