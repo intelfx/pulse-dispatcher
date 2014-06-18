@@ -14,7 +14,7 @@ std::unique_ptr<AbstractSource> make_source (const std::string& name,
                                              const options_map_t& options)
 {
 	if (name == "terminal" || name == "term") {
-		return std::unique_ptr<AbstractSource> (new TerminalSource);
+		return std::unique_ptr<AbstractSource> (new TerminalSource (options));
 	} else if (name == "soundfile" || name == "sndfile") {
 		return std::unique_ptr<AbstractSource> (new SoundFileSource (options));
 	} else {

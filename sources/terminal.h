@@ -2,15 +2,18 @@
 #define _SOURCES_TERMINAL_H
 
 #include <source.h>
+#include <options.h>
 
 class TerminalSource: public AbstractSource
 {
 	channels_mask_t toggle_mode_channels_;
+	bool toggle_;
+	std::chrono::milliseconds pulse_width_;
 
 	void toggle (channels_mask_t mask);
 
 public:
-	TerminalSource();
+	TerminalSource(const options_map_t& options);
 	virtual ~TerminalSource();
 
 	virtual bool runs_in_main_thread() const;

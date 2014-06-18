@@ -6,12 +6,14 @@ namespace {
 
 size_t instance_count = 0;
 
-const std::chrono::milliseconds DEFAULT_PULSE (30);
+const long DEFAULT_PULSE_MSEC = 30;
 
 } // anonymous namespace
 
-TerminalSource::TerminalSource()
+TerminalSource::TerminalSource (const options_map_t& options)
 	: toggle_mode_channels_ (0)
+	, toggle_ (options.get_bool ("toggle"))
+	, pulse_width_ (options.get_int ("pulse", DEFAULT_PULSE_MSEC))
 {
 	assert (!instance_count, "TerminalSource: creating more than one instance is meaningless");
 
@@ -57,14 +59,14 @@ void TerminalSource::loop()
 		if (input == '`') {
 			return;
 		} else if (input == '-') {
-			pulse (DEFAULT_PULSE);
+			pulse (pulse_width_);
 		} else {
 			channel = Core::symbol_to_channel (input);
 			if (channel >= 0) {
-				if (isupper (input)) {
+				if (toggle_) {
 					toggle (1 << channel);
 				} else {
-					pulse_m (1 << channel, DEFAULT_PULSE);
+					pulse_m (1 << channel, pulse_width_);
 				}
 			}
 		}
