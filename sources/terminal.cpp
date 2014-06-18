@@ -51,12 +51,15 @@ void TerminalSource::toggle (channels_mask_t mask)
 
 void TerminalSource::loop()
 {
-	char input;
+	int input;
 	ssize_t channel;
 
 	for (;;) {
 		input = getchar();
-		if (input == '`') {
+
+		if (input == EOF) {
+			return;
+		} else if (input == '`') {
 			return;
 		} else if (input == '-') {
 			pulse (pulse_width_);
