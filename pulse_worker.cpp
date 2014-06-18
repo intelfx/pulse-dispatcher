@@ -58,7 +58,7 @@ void pulse_worker::run()
 	thread = std::thread (&pulse_worker::loop, this);
 }
 
-void pulse_worker::join()
+void pulse_worker::stop_and_join()
 {
 	lock_guard_t L (mutex);
 	destroying = true;

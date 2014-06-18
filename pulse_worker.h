@@ -21,7 +21,7 @@ struct pulse_worker
 
 	void loop();
 	void run();
-	void join();
+	void stop_and_join();
 };
 
 #endif // _PULSE_H

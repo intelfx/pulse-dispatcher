@@ -22,7 +22,7 @@ void AbstractSource::run_loop()
 {
 	worker_.run();
 	loop();
-	worker_.join();
+	worker_.stop_and_join();
 }
 
 void AbstractSource::join()
@@ -30,7 +30,7 @@ void AbstractSource::join()
 	if (thread_.joinable()) {
 		thread_.join();
 	}
-	worker_.join();
+	worker_.stop_and_join();
 }
 
 void AbstractSource::set_channels (channels_mask_t channels)

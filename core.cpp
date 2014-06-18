@@ -167,7 +167,7 @@ void Core::join_sources()
 	}
 
 	for (pulse_worker& worker: channels_workers_) {
-		worker.join();
+		worker.stop_and_join();
 	}
 }
 
