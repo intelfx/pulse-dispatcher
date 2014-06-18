@@ -13,6 +13,8 @@ static const char* __file_name_translation_unit()
 
 #ifndef NDEBUG
 # define dbg(...) __write_msg ("d", __VA_ARGS__)
+#else
+# define dbg(...) do { } while (false)
 #endif // NDEBUG
 
 #define log(...)  __write_msg (" ", __VA_ARGS__)
