@@ -41,7 +41,7 @@ void pulse_worker::loop()
 		utils::clock::time_point sleep_until = queue.front();
 		queue.pop();
 
-		mutex.unlock();
+		L.unlock();
 		if (!state && !ignore_next_pulse) {
 			if (mode == MODE_SINGLE_PULSE) {
 				ignore_next_pulse = true;
@@ -50,7 +50,7 @@ void pulse_worker::loop()
 			Core::instance.edge (mask, true);
 		}
 		std::this_thread::sleep_until (sleep_until);
-		mutex.lock();
+		L.lock();
 
 		if (state && (queue.empty() || ignore_next_pulse)) {
 			state = false;
