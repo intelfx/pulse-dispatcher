@@ -17,7 +17,7 @@ pulse_worker::pulse_worker (pulse_worker&& rhs)
 	, mode (rhs.mode)
 { }
 
-void pulse_worker::add_to_queue (std::chrono::_V2::steady_clock::time_point pulse_end)
+void pulse_worker::add_to_queue (utils::clock::time_point pulse_end)
 {
 	lock_guard_t L (mutex);
 	queue.emplace (pulse_end);
